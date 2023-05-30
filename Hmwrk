@@ -6,3 +6,30 @@
 
 #Using breadth-first search write an algorithm that can determine the shortest path from each vertex to every other vertex.
 This is called the all-pairs shortest path problem.
+
+from collections import deque
+
+def shortest_paths_bfs(graph):
+    shortest_paths = {} #пустий словник, аггрегант для найкоротших шляхів
+
+    for v in graph:
+        distances = {} #пустий словник аггрегант для зберігання відстаней від v до інших вершин
+        queue = deque() #пуста черга для траверсії в ширину
+
+        queue.append(v)
+        distances[v] = 0 #задали початкову відстань 0
+
+        while queue:
+            current = queue.popleft()
+
+            for neighbor in graph[current]:
+                if neighbor not in distances or distances[current] + 1 < distances[neighbor]:
+                    queue.append(neighbor)
+                    distances[neighbor] = distances[current] + 1
+                    shortest_paths[(v, neighbor)] = shortest_paths.get((v, current), []) + [neighbor]
+
+    return shortest_paths
+
+
+input'ом функції shortest_paths_bfs є граф, представлений у вигляді словника, в якому ключами є вершини (vertex), а значеннями (values) є списки сусідніх вершин. 
+ output'ом є словник shortest_paths, що містить найкоротші шляхи від кожної вершини v до інших вершин графа. Шляхи збережені у вигляді списків вершин.
