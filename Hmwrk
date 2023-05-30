@@ -2,6 +2,77 @@
 
 #Modify the `depth-first search` to produce strongly connected components.
 
+from collections import defaultdict
+
+def dfs(graph, node, visited, stack):
+    visited[node] = True
+
+    for neighbor in graph[node]:
+        if not visited[neighbor]:
+            dfs(graph, neighbor, visited, stack)
+
+    stack.append(node)
+
+def transpose_graph(graph):
+    transposed = defaultdict(list)
+    for node in graph:
+        for neighbor in graph[node]:
+            transposed[neighbor].append(node)
+    return transposed
+
+def dfs_scc(graph, node, visited, component):
+    visited[node] = True
+    component.append(node)
+
+    for neighbor in graph[node]:
+        if not visited[neighbor]:
+            dfs_scc(graph, neighbor, visited, component)
+
+def find_scc(graph):
+    stack = []
+    visited = defaultdict(bool)
+
+    for node in graph:
+        if not visited[node]:
+            dfs(graph, node, visited, stack)
+
+    transposed = transpose_graph(graph)
+    visited.clear()
+
+    sccs = []
+    while stack:
+        node = stack.pop()
+        if not visited[node]:
+            component = []
+            dfs_scc(transposed, node, visited, component)
+            sccs.append(component)
+
+    return sccs
+    
+graph = {
+    0: [1],
+    1: [2],
+    2: [0, 3],
+    3: [4],
+     4: [2, 5],
+     5: [6],
+     6: [5, 7],
+     7: [8],
+     8: [9],
+     9: [6]
+}
+
+sccs = find_scc(graph)
+print("Strongly Connected Components:")
+for scc in sccs:
+    print(scc)
+
+
+Strongly Connected Components:
+[9, 8, 7, 6, 5]
+[4, 3, 2, 0, 1]
+
+
 #Task 2
 
 #Using breadth-first search write an algorithm that can determine the shortest path from each vertex to every other vertex.
